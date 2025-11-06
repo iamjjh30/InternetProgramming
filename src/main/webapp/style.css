@@ -1,0 +1,79 @@
+/* 전체 문서: 스크롤 가능, 헤더 공간 확보는 JS에서 처리 */
+body {
+    margin: 0;
+    background: #e9ecef;
+    overflow-y: auto;      /* 스크롤 막지 않기 */
+}
+
+/* ✅ 고정 헤더 (스케일 제외) */
+#global-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 72px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    z-index: 1000;
+}
+#global-header .header-inner {
+    max-width: 1440px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.nav-left { display: flex; align-items: center; gap: 10px; }
+.menu-btn, .category-btn { background: none; border: 0; font-size: 16px; cursor: pointer; }
+.search-bar { width: 400px; padding: 8px 14px; border: 1px solid #ccc; border-radius: 20px; }
+.nav-right a { margin-left: 20px; text-decoration: none; color: #222; font-weight: 500; }
+
+/* 🎯 1440x1024 캔버스 (여기만 scale) */
+.stage {
+    width: 1440px;
+    height: 1024px;
+    margin: 0 auto;               /* 가로 중앙 */
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,.1);
+    transform-origin: top center; /* JS가 scale 적용 */
+    transition: transform .2s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 메인 배너 */
+.hero {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #38b6ff;
+    color: #fff;
+    padding: 80px 100px;
+}
+.hero-text { width: 55%; }
+.hero-text h2 { font-size: 26px; line-height: 1.6; font-weight: 700; }
+.start-btn {
+    margin-top: 30px; background: #000; color:#fff;
+    padding: 14px 28px; border: 0; border-radius: 8px; font-size: 16px; cursor: pointer;
+}
+.start-btn:hover { background:#333; }
+.hero-img { width: 35%; text-align: right; }
+.hero-img img { width: 250px; }
+.hero-img .credit { display:block; font-size:12px; opacity:.8; margin-top:5px; }
+
+/* 게시판 */
+.board-section {
+    display: flex;
+    justify-content: space-around;
+    background: #f4f4f4;
+    padding: 50px 100px;
+    height: 300px;
+}
+.board { width: 40%; }
+.board h3 { font-size: 20px; margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; background:#fff; }
+th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; }
+th { border-bottom: 2px solid #000; }
+tr:hover { background: #f1f1f1; }
