@@ -1,0 +1,16 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Build
+/out/
+/target/
+*.class
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Lib (수동 jar)
+*.jar
+*.war
