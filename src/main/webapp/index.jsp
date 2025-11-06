@@ -36,8 +36,6 @@
             <button class="start-btn">지금 시작하기 →</button>
         </div>
         <div class="hero-img">
-            <img src="https://cdn.pixabay.com/photo/2017/10/27/15/12/people-2892254_1280.png" alt="illustration" />
-            <span class="credit">Illustration - pavan6811</span>
         </div>
     </section>
 

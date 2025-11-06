@@ -104,12 +104,18 @@ body {
 }
 
 .hero-img {
-    text-align: right;
-    width: 35%;
+    width: 350px;
+    height: 350px;
+    background-image: url('bannerImage.png');
+    background-size: contain; /* contain=비율유지, cover=꽉 채움 */
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
+
 .hero-img img {
-    width: 260px;
+    width: 300px;
+    height: auto;
 }
 
 .hero-img .credit {
