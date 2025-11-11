@@ -12,3 +12,4 @@
 # 기타
 .DS_Store
 *.log
+.idea/vcs.xml
