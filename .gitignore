@@ -1,16 +1,17 @@
-# IntelliJ
+# 빌드 결과물
+/target
+/out
+*.class
+*.war
+*.jar
+
+# IDE 관련
 .idea/
 *.iml
 
-# Build
-/out/
-/target/
-*.class
+# 백업 파일
+*.bak
+*.log
 
-# OS
+# 시스템
 .DS_Store
-Thumbs.db
-
-# Lib (수동 jar)
-*.jar
-*.war
