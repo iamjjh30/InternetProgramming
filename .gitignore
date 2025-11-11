@@ -1,16 +1,14 @@
-# IntelliJ
-.idea/
-*.iml
-
-# Build
-/out/
+# Java & Maven
 /target/
+/out/
 *.class
 
-# OS
-.DS_Store
-Thumbs.db
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+/workspace.xml
 
-# Lib (수동 jar)
-*.jar
-*.war
+# 기타
+.DS_Store
+*.log
