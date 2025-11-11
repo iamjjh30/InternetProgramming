@@ -1,17 +1,15 @@
-# 빌드 결과물
-/target
-/out
-*.class
-*.war
-*.jar
-
-# IDE 관련
+# IntelliJ IDEA
 .idea/
 *.iml
 
-# 백업 파일
-*.bak
-*.log
+# Build output
+/out/
+target/
 
-# 시스템
+# 기타 캐시나 환경 관련 파일
+*.log
+*.class
 .DS_Store
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
