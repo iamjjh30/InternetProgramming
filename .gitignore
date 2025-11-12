@@ -1,16 +1,15 @@
-# IntelliJ
+# IntelliJ IDEA
 .idea/
 *.iml
 
-# Build
+# Build output
 /out/
-/target/
+target/
+
+# 기타 캐시나 환경 관련 파일
+*.log
 *.class
-
-# OS
 .DS_Store
-Thumbs.db
 
-# Lib (수동 jar)
-*.jar
-*.war
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
