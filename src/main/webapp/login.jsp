@@ -1,22 +1,31 @@
 <%@ page contentType="text/html;charset=euc-kr" %>
-<html><head><title>로그인</title></head>
-<body onLoad="login_focus()">
-
-<center>
-<br><br><br><br>
-<form name="login" method="post" action="loginOK.jsp" target=_parent> 
- <table border=0 cellpadding=5>
-<tr>
- <td><font size=2>아이디 : </font></td>
-<td><input type="text" name="id" style="width:120;height=20"></td>
-<td rowspan=2>
- <tr>
- <td><font size=2>패스워드 : </font></td>
- <td><input type="password" name="pw" style="width:120;height=20">&nbsp
- <input type="submit" value="로그인">
- </tr>
- </table><p> 
- </form>
-</center> 
-</body> 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+<div id="header-placeholder"></div>
+<!-- ? 로그인 카드 -->
+<div class="login-container">
+    <div class="login-box">
+        <h2>로그인</h2>
+        <form>
+            <input type="text" placeholder="아이디" required />
+            <input type="password" placeholder="비밀번호" required />
+            <button type="submit">Log in</button>
+        </form>
+        <div class="signup-link">
+            회원이 아니신가요? <a href="register.jsp">회원가입</a>
+        </div>
+        <div class="find-links">
+            <a href="#">아이디 찾기</a>
+            <a href="#">비밀번호 찾기</a>
+        </div>
+    </div>
+</div>
+<script src="include.js"></script>
+</body>
 </html>

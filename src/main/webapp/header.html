@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>커뮤니티 마켓</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<!-- 상단 헤더 -->
+<header class="navbar">
+    <div class="navbar-inner">
+        <div class="nav-left">
+            <button class="category-btn" id="categoryBtn">☰ 카테고리</button>
+            <div class="dropdown" id="dropdownMenu">
+                <a href="#">중고거래</a>
+                <a href="#">패션의류</a>
+                <a href="#">뷰티</a>
+                <a href="#">모바일/태블릿</a>
+                <a href="#">가전제품</a>
+            </div>
+        </div>
+        <div class="nav-center">
+            <input type="text" class="search-bar" placeholder="검색어를 입력하세요" />
+        </div>
+        <div class="nav-right">
+            <a href="insertItem.jsp">판매하기</a>
+            <a href="login.jsp">로그인</a>
+        </div>
+    </div>
+</header>
+<script>
+    const button = document.getElementById('categoryBtn');
+    const dropdown = document.getElementById('dropdownMenu');
+
+    button.addEventListener('click', function (e) {
+        dropdown.classList.toggle('active');
+        e.stopPropagation(); // 버튼 클릭 시 문서 클릭 이벤트 방지
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('active');
+        }
+    });
+</script>
+</body>
+</html>
