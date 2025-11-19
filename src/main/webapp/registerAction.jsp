@@ -1,77 +1,94 @@
-<%@ page contentType="text/html;charset=euc-kr" %>
+<%@ page import="java.io.*" %>
+<%@ page import="java.security.*" %>
 <%@ page import="java.sql.*" %>
-<html>
-<body>
+<%@ page import="javax.servlet.http.Part" %>
+
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%
-request.setCharacterEncoding("euc-kr");
-String email = request.getParameter("email");
-String id = request.getParameter("id"); 
-String pw = request.getParameter("pw");
-String name = request.getParameter("name");
-String nick = request.getParameter("nick");
-String phone = request.getParameter("phone");
-String addr = request.getParameter("addr");
+    request.setCharacterEncoding("UTF-8");
 
-try {
- String DB_URL="jdbc:mysql://localhost:3306/final"; 
- String DB_ID="multi"; 
- String DB_PASSWORD="abcd"; 
- 
-Class.forName("org.gjt.mm.mysql.Driver"); 
- Connection con = DriverManager.getConnection(DB_URL, DB_ID, DB_PASSWORD);
+    // ì—…ë¡œë“œ ê²½ë¡œ
+    String uploadPath = application.getRealPath("/uploads");
+    File uploadDir = new File(uploadPath);
+    if (!uploadDir.exists()) uploadDir.mkdirs();
 
-String jsql = "INSERT INTO user (email, pw, name, nick, phone, addr) ";
-jsql = jsql + " VALUES (?, ?, ?, ?, ?, ?)";
-PreparedStatement pstmt = con.prepareStatement(jsql);
-pstmt.setString(1,email);
-pstmt.setString(2,pw);
-pstmt.setString(3,name);
-pstmt.setString(4,nick);
-pstmt.setString(5,phone);
-pstmt.setString(6,addr);
-pstmt.executeUpdate();
- } catch(Exception e) { 
-out.println(e);
-}
+    // ---- multipartì—ì„œ í…ìŠ¤íŠ¸ ê°’ êº¼ë‚´ê¸° ----
+    String memId     = request.getPart("memId").getInputStream().readAllBytes().length > 0
+            ? new String(request.getPart("memId").getInputStream().readAllBytes(), "UTF-8")
+            : null;
+
+    String memName   = request.getPart("memName").getInputStream().readAllBytes().length > 0
+            ? new String(request.getPart("memName").getInputStream().readAllBytes(), "UTF-8")
+            : null;
+
+    String memPasswd = request.getPart("memPasswd").getInputStream().readAllBytes().length > 0
+            ? new String(request.getPart("memPasswd").getInputStream().readAllBytes(), "UTF-8")
+            : null;
+
+    String emailId = request.getPart("emailId").getInputStream().readAllBytes().length > 0
+            ? new String(request.getPart("emailId").getInputStream().readAllBytes(), "UTF-8")
+            : "";
+
+    String emailDomain = request.getPart("emailDomain").getInputStream().readAllBytes().length > 0
+            ? new String(request.getPart("emailDomain").getInputStream().readAllBytes(), "UTF-8")
+            : "";
+
+    String email = emailId + "@" + emailDomain;
+
+    String phone1 = new String(request.getPart("phone1").getInputStream().readAllBytes(), "UTF-8");
+    String phone2 = new String(request.getPart("phone2").getInputStream().readAllBytes(), "UTF-8");
+    String phone3 = new String(request.getPart("phone3").getInputStream().readAllBytes(), "UTF-8");
+
+    String phone = phone1 + "-" + phone2 + "-" + phone3;
+
+    // ---- í”„ë¡œí•„ ì´ë¯¸ì§€ ì €ì¥ ----
+    Part filePart = request.getPart("profileImg");
+    String profileImg = "";
+
+    if (filePart != null && filePart.getSize() > 0) {
+        String header = filePart.getHeader("content-disposition");
+        String fileName = header.substring(header.indexOf("filename=") + 10, header.length() - 1);
+
+        if (!fileName.equals("")) {
+            String newName = memId + "_" + System.currentTimeMillis() + "_" + fileName;
+            filePart.write(uploadPath + "/" + newName);
+            profileImg = "uploads/" + newName;
+        }
+    }
+
+    // ---- DB ì €ì¥ ----
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/internetProgramming?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul",
+                "multi", "abcd"
+        );
+
+        String sql = "INSERT INTO member (memId, memPasswd, memName, memPhone, memAddress, profileImg) VALUES (?, ?, ?, ?, ?, ?)";
+        pstmt = conn.prepareStatement(sql);
+
+        pstmt.setString(1, memId);
+        pstmt.setString(2, memPasswd);
+        pstmt.setString(3, memName);
+        pstmt.setString(4, phone);
+        pstmt.setString(5, email);
+        pstmt.setString(6, profileImg);
+
+        int result = pstmt.executeUpdate();
+
+        if (result > 0) {
+            out.print("<script>alert('íšŒì›ê°€ì… ì„±ê³µ!'); location.href='login.jsp';</script>");
+        } else {
+            out.print("<script>alert('íšŒì›ê°€ì… ì‹¤íŒ¨'); history.back();</script>");
+        }
+
+    } catch (Exception e) {
+        out.print("ì˜¤ë¥˜: " + e.getMessage());
+    } finally {
+        if (pstmt != null) pstmt.close();
+        if (conn != null) conn.close();
+    }
 %>
- 
-<br><br>
-<font size='6'><b>È¸¿ø °¡ÀÔ ³»¿ª </b></font><p>
-<table border=1 cellpadding=5 style="font-size:10pt;font-family: " ¸¼Àº °íµñ >
-<tr>
-<td>id</td>
-<td><%=id%></td>
-</tr>
-<tr>
-<td width=100>ÀÌ¸ŞÀÏ</td>
-<td width=200><%=email%></td>
-</tr>
-<tr>
-<td>ºñ¹Ğ¹øÈ£</td>
-<td><%=pw%></td>
-</tr>
-<tr>
-<td>ÀÌ¸§</td>
-<td><%=name%></td>
-</tr>
-<tr>
-<td>´Ğ³×ÀÓ</td>
-<td><%=nick%></td>
-</tr>
-
-<tr>
-<td>ÀüÈ­¹øÈ£</td>
-<td><%=phone%></td>
-</tr>
-<tr>
-<td>ÁÖ¼Ò</td>
-<td><%=addr%></td>
-</tr>
-
-</table>
-<p>
-<br>
-<a href="index.jsp" style="font-size:10pt;font-family: " ¸¼Àº °íµñ >¸ŞÀÎÈ­¸é</a>
-</center>
-</body>
-</html>

@@ -83,8 +83,23 @@ input[type="password"],
 .phone-row select {
     width: 80px;
 }
-
+.cancel-btn {
+    display: inline-block;
+    width: 48%;
+    margin-top: 20px;
+    padding: 12px 0;
+    background-color: #cccccc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
 .submit-btn {
+    display: inline-block;
+    width: 48%;
+    float: right;
     margin-top: 20px;
     padding: 12px 0;
     background-color: #38b6ff;
