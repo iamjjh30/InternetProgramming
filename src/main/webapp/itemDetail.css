@@ -1,0 +1,113 @@
+body {
+    margin: 0;
+    font-family: "Noto Sans KR", sans-serif;
+}
+
+/* 상단 전체 영역 */
+.detail-container {
+    width: 1200px;
+    margin: 120px 300px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+/* 상품 사진 */
+.left-box .product-img {
+    width: 350px;
+    height: 350px;
+    background: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+}
+
+/* 상품 정보 박스 */
+.right-box {
+    margin-bottom: 20px;
+    width: 570px;
+}
+
+.title {
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+
+.price {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.delivery {
+    margin-top: 10px;
+    color: #555;
+}
+
+/* 버튼 영역 */
+.button-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 150px;
+    border-radius:5px;
+}
+
+.heart-btn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.chat-btn {
+    padding: 12px 28px;
+
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.buy-btn {
+    padding: 12px 32px;
+    background: #1e90ff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* 🔥 하단 2열 레이아웃 */
+.bottom-section {
+    width: 1200px;
+    margin: 80px 300px auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 80px;
+}
+
+/* 왼쪽 상품 정보 */
+.bottom-left {
+    width: 50%;
+}
+
+/* 오른쪽 판매자 정보 */
+.bottom-right {
+    width: 50%;
+}
+
+/* 판매자 정보 박스 */
+.seller-box {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.seller-name {
+    font-size: 20px;
+}
+
+.seller-img {
+    font-size: 40px;
+}

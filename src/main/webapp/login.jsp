@@ -13,7 +13,9 @@
     <div class="login-box">
         <h2>로그인</h2>
         <form>
+            <p>아이디</p>
             <input type="text" placeholder="아이디" required />
+            <p>비밀번호</p>
             <input type="password" placeholder="비밀번호" required />
             <button type="submit">Log in</button>
         </form>
@@ -21,8 +23,8 @@
             회원이 아니신가요? <a href="register.jsp">회원가입</a>
         </div>
         <div class="find-links">
-            <a href="#">아이디 찾기</a>
-            <a href="#">비밀번호 찾기</a>
+            <a href="findId.jsp">아이디 찾기</a>
+            <a href="findPw.jsp">비밀번호 찾기</a>
         </div>
     </div>
 </div>

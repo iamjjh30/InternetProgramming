@@ -12,16 +12,15 @@
         <div class="nav-left">
             <button class="category-btn" id="categoryBtn">☰ 카테고리</button>
             <div class="dropdown" id="dropdownMenu">
-                <a href="#">중고거래</a>
                 <a href="#">패션의류</a>
                 <a href="#">뷰티</a>
                 <a href="#">모바일/태블릿</a>
                 <a href="#">가전제품</a>
             </div>
         </div>
-        <div class="nav-center">
-            <input type="text" class="search-bar" placeholder="검색어를 입력하세요" />
-        </div>
+        <form action="itemSearch.jsp" method="get">
+            <input type="text" name="keyword" class="search-bar" placeholder="검색어를 입력하세요">
+        </form>
         <div class="nav-right">
             <a href="insertItem.jsp">판매하기</a>
             <a href="login.jsp">로그인</a>

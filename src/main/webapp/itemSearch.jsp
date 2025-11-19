@@ -1,106 +1,94 @@
-<%@ page contentType="text/html;charset=euc-kr" %>
-<%@ page import="java.sql.*" %>
-<%@ page import="java.text.NumberFormat" %> <%-- 가격 콤마 표시를 위해 추가 --%>
+<%@ page contentType="text/html; charset=euc-kr" %>
+<!DOCTYPE html>
+<html lang="ko">
 
-<html>
 <head>
-    <title>상품 검색</title>
+    <meta charset="UTF-8">
+    <title>검색결과</title>
+    <link rel="stylesheet" href="itemSearch.css">
 </head>
+
 <body>
+<div id="header-placeholder"></div>
 
-<center>
-    <h2>상품 검색</h2>
-    
-    <%-- 1. 상품 검색 폼 --%>
-    <form name="search" method="post" action="itemSearch.jsp">
-        <input type="text" name="searchKeyword" size="30" 
-               value="<%-- 검색어 유지 --%><%=(request.getParameter("searchKeyword") != null ? request.getParameter("searchKeyword") : "")%>">
-        <input type="submit" value="검색">
-    </form>
-    <br><hr><br>
+<div class="container">
 
-    <%-- 2. 상품 검색 결과 처리 --%>
-    <%
-       
-        request.setCharacterEncoding("euc-kr");
-        String keyword = request.getParameter("searchKeyword");
+    <h2 class="page-title">검색결과</h2>
 
-        // 검색어가 있을 경우에만 DB 검색 수행
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            
-            
-            String DB_URL = "jdbc:mysql://localhost:3306/final";
-            String DB_ID = "multi";
-            String DB_PASSWORD = "abcd";
-            
-            Connection con = null;
-            PreparedStatement pstmt = null;
-            ResultSet rs = null;
-            
-            // 가격 포맷 (1000 -> 1,000)
-            NumberFormat nf = NumberFormat.getInstance();
+    <!-- ? 가격 / 옵션 / 카테고리 필터 -->
+    <table class="filter-table">
+        <tr>
+            <th>가격</th>
+            <td>
+                <input type="number" placeholder="최소가격" class="price-input">
+                ~
+                <input type="number" placeholder="최대가격" class="price-input">
+                <button class="search-btn">검색</button>
+            </td>
+        </tr>
 
-            try {
-                Class.forName("org.gjt.mm.mysql.Driver");
-                con = DriverManager.getConnection(DB_URL, DB_ID, DB_PASSWORD);
+        <tr>
+            <th>옵션</th>
+            <td class="option-row">
+                <label><input type="checkbox"> 무료배송</label>
+                <label><input type="checkbox"> 판매중</label>
+                <label><input type="checkbox"> 판매완료</label>
+            </td>
+        </tr>
 
-               
-                String sql = "SELECT id, user_id, cat_id, title FROM item WHERE title  LIKE ?";
-                
-                pstmt = con.prepareStatement(sql);
-                pstmt.setString(1, "%" + keyword + "%"); // 예: "컴퓨터" -> "%컴퓨터%"
-                
-                rs = pstmt.executeQuery();
-    %>
-                <h3>'<%= keyword %>' 검색 결과</h3>
-                <table border="1" width="700">
-                    <tr align="center" bgcolor="#DDDDDD">
-                        <th>상품 이미지</th>
-                        <th>상품명</th>
-                        <th>상품 가격</th>
-                        <th>상세보기</th>
-                    </tr>
-    <%
-                if (!rs.isBeforeFirst()) { // rs.isBeforeFirst() : 결과가 있는지 확인
-                    // 검색 결과가 없는 경우
-                    out.println("<tr><td colspan='4' align='center'>");
-                    out.println("'" + keyword + "'에 대한 검색 결과가 없습니다.");
-                    out.println("</td></tr>");
-                } else {
-                    // 검색 결과가 있는 경우, 반복문으로 출력
-                    while (rs.next()) {
-                        int id = rs.getInt("id");
-                        int user_id = rs.getInt("user_id");
-                        int cat_id = rs.getInt("cat_id");
-                        String title = rs.getString("title");
-    %>
-                        <tr align="center">
-                            <td>
-                                <%=title%>
-                            </td>
-                            <td align="left"><%= id%></td>
-                            
-                            <td>
-                                <a href="itemDetail.jsp?prdNo=<%= cat_id %>">[상세보기]</a>
-                            </td>
-                        </tr>
-    <%
-                    } // while문 끝
-                } // else문 끝
-    %>
-                </table>
-    <%
-            } catch (Exception e) {
-                out.println("상품 검색 중 오류가 발생했습니다: " + e.getMessage());
-            } finally {
-                // 자원 해제
-                if (rs != null) rs.close();
-                if (pstmt != null) pstmt.close();
-                if (con != null) con.close();
-            }
-        } // if(keyword != null) 끝
-    %>
-</center>
+        <tr>
+            <th>카테고리</th>
+            <td class="category-row">
+                <input type="radio" name="category" value="fashion">패션의류</button>
+                <input type="radio" name="category" value="beauty">뷰티</input>
+                <input type="radio" name="category" value="mobile">모바일/태블릿</button>
+                <input type="radio" name="category" value="appliances">가전제품</button>
+            </td>
+        </tr>
+    </table>
+
+    <!-- ? 정렬 메뉴 -->
+    <div class="sort-box">
+        <a href="#" class="sort-item active">최신순</a>
+        <a href="#" class="sort-item">낮은가격순</a>
+        <a href="#" class="sort-item">높은가격순</a>
+    </div>
+
+    <!-- ? 상품 리스트 -->
+    <div class="item-list">
+        <a href="itemDetail.jsp" class="item-card">
+            <div class="item-img">상품 사진</div>
+            <div class="item-status">판매중</div>
+            <div class="item-title">제목</div>
+            <div class="item-cate">카테고리</div>
+            <div class="item-price">15,000원</div>
+        </a>
+        <a href="itemDetail.jsp" class="item-card">
+            <div class="item-img">상품 사진</div>
+            <div class="item-status">판매중</div>
+            <div class="item-title">제목</div>
+            <div class="item-cate">카테고리</div>
+            <div class="item-price">50,000원</div>
+        </a>
+        <a href="itemDetail.jsp" class="item-card">
+            <div class="item-img">상품 사진</div>
+            <div class="item-status">판매중</div>
+            <div class="item-title">제목</div>
+            <div class="item-cate">카테고리</div>
+            <div class="item-price">125,000원</div>
+        </a>
+        <a href="itemDetail.jsp" class="item-card">
+            <div class="item-img">상품 사진</div>
+            <div class="item-status">판매중</div>
+            <div class="item-title">제목</div>
+            <div class="item-cate">카테고리</div>
+            <div class="item-price">11,000원</div>
+        </a>
+
+    </div>
+</div>
+
+<script src="include.js"></script>
 
 </body>
 </html>
