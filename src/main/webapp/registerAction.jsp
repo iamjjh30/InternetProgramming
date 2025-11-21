@@ -13,11 +13,11 @@
     if (!uploadDir.exists()) uploadDir.mkdirs();
 
     // ---- multipart에서 텍스트 값 꺼내기 ----
-    String memId     = request.getPart("memId").getInputStream().readAllBytes().length > 0
+    String memId = request.getPart("memId").getInputStream().readAllBytes().length > 0
             ? new String(request.getPart("memId").getInputStream().readAllBytes(), "UTF-8")
             : null;
 
-    String memName   = request.getPart("memName").getInputStream().readAllBytes().length > 0
+    String memName = request.getPart("memName").getInputStream().readAllBytes().length > 0
             ? new String(request.getPart("memName").getInputStream().readAllBytes(), "UTF-8")
             : null;
 

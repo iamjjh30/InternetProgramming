@@ -1,77 +1,89 @@
-<%@ page contentType="text/html;charset=euc-kr" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
 
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=euc-kr">
-<title>·Î±×ÀÎ</title>
-</head>
-
-<body bgcolor="white" text="black" link="blue" vlink="purple" alink="red">
-
 <%
- 	 String DB_URL="jdbc:mysql://localhost:3306/final"; 
-     String DB_ID="multi"; 
-     String DB_PASSWORD="abcd";
- 	 
-	 Class.forName("org.gjt.mm.mysql.Driver");  
- 	 Connection con = DriverManager.getConnection(DB_URL, DB_ID, DB_PASSWORD); 
+    request.setCharacterEncoding("UTF-8");
 
-    String id = request.getParameter("id");            
-    String pass = request.getParameter("pw");  
+    // 1. í¼ ë°ì´í„° ë°›ê¸°
+    String memId = request.getParameter("memId");
+    String memPasswd = request.getParameter("memPasswd");
 
-    
-    String jsql = "select  *  from user where id = ? "; 
-    PreparedStatement pstmt = con.prepareStatement(jsql);
-    pstmt.setString(1, id);
+    // DB ì—°ê²° ê´€ë ¨ ë³€ìˆ˜
+    Connection conn = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
 
-    ResultSet rs = pstmt.executeQuery(); 
+    // ë¡œê·¸ì¸ ì„±ê³µ ì—¬ë¶€ í”Œëž˜ê·¸
+    boolean loginSuccess = false;
+    String userName = null; // ë¡œê·¸ì¸ ì„±ê³µ ì‹œ ì‚¬ìš©ìž ì´ë¦„ì„ ì €ìž¥í•  ë³€ìˆ˜
 
-    if( rs.next() )   //  (1) ÀÔ·ÂÇÑ ID¸¦ °¡Áö´Â ·¹ÄÚµå°¡ Å×ÀÌºí¿¡ Á¸ÀçÇÏ´Â °æ¿ì
-    {
-        if (pass.equals(rs.getString("pw")))  
-    	//  (1.1) ÀÔ·ÂÇÑ ID¸¦ °¡Áö´Â ·¹ÄÚµå°¡ Á¸ÀçÇÏ¸é¼­, 
-	    //	        ÀÔ·ÂÇÑ ºñ¹Ð¹øÈ£°¡ memberÅ×ÀÌºí»óÀÇ ºñ¹Ð¹øÈ£¿Íµµ ÀÏÄ¡ÇÏ´Â °æ¿ì
-        {
-             session.setAttribute("sid", id);
- 	      // ·Î±×ÀÎ ¼º°ø½Ã, Á¢¼ÓÇÑ »ç¿ëÀÚÀÇ ID¸¦ "sid" ¼Ó¼ºÀÇ ¼Ó¼º°ªÀ¸·Î ¼³Á¤ÇÔ.
-          // ÃßÈÄ ·Î±×ÀÎ µÈ »óÅÂ¿¡¼­ Á¢¼Ó ID¿Í °ü·ÃµÈ Á¤º¸¸¦ ÇÊ¿ä·Î ÇÒ¶§,
-	      // (String)session.getAttribute("sid")¸¦ ÀÌ¿ëÇÏ¿© Á¢¼Ó ID Á¤º¸¸¦ °¡Á®¿Ã ¼ö ÀÖ´Ù.
-     	  // ´Ü¼øÈ÷, ·Î±×ÀÎ ¿©ºÎ ÆÇº°Àº ÀÌ ¼Ó¼º°ªÀÌ nullÀÎÁö ¾Æ´ÑÁö·Î ·Î±×ÀÎ ¿©ºÎ¸¦ È®ÀÎÇÔ. 
-	      //  (·Î±×ÀÎÀÌ ¾ÈµÈ °æ¿ì, ÀÌ °ªÀº null°ªÀ» °¡Áü)
+    // JDBC ë“œë¼ì´ë²„ ì •ë³´
+    String dbURL = "jdbc:mysql://localhost:3306/internetProgramming?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul";
+    String dbUser = "multi";
+    String dbPass = "abcd";
+    String driver = "com.mysql.cj.jdbc.Driver";
 
-             response.sendRedirect("index.jsp");
+    try {
+        // 2. ë“œë¼ì´ë²„ ë¡œë“œ
+        Class.forName(driver);
 
-		 } else {   // (1.2) ÀÔ·ÂÇÑ ID¸¦ °¡Áö´Â ·¹ÄÚµå°¡ Å×ÀÌºí¿¡ Á¸ÀçÇÏÁö¸¸, ºñ¹Ð¹øÈ£°¡ ºÒÀÏÄ¡ÇÑ °æ¿ì
+        // 3. DB ì—°ê²°
+        conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+
+        // 4. SQL ì¤€ë¹„ ë° ì‹¤í–‰ (Prepared Statement ì‚¬ìš©ìœ¼ë¡œ SQL Injection ë°©ì§€)
+        String sql = "SELECT memName FROM member WHERE memId = ? AND memPasswd = ?";
+        pstmt = conn.prepareStatement(sql);
+
+        pstmt.setString(1, memId);
+        pstmt.setString(2, memPasswd);
+
+        rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            // 5. ë¡œê·¸ì¸ ì„±ê³µ
+            loginSuccess = true;
+            userName = rs.getString("memName");
+        }
+
+    } catch (SQLException e) {
+        // DB ì ‘ì† ë˜ëŠ” ì¿¼ë¦¬ ì˜¤ë¥˜ ì‹œ
+        System.out.println("DB ì˜¤ë¥˜ ë°œìƒ: " + e.getMessage());
 %>
-      <br><br><br>
-	  <center>
-      <font color=black size=2>
-            ºñ¹Ð¹øÈ£°¡ Àß¸ø µÇ¾ú½À´Ï´Ù.  ´Ù½Ã È®ÀÎÇØ ÁÖ¼¼¿ä!<p>
-			·Î±×ÀÎ ÆäÀÌÁö·Î µ¹¾Æ°¡½Ã·Á¸é 
-			<a href="login.jsp" ><font color=red><¿©±â></font></a>¸¦ Å¬¸¯, <p>
-			¸ÞÀÎ ÆäÀÌÁö·Î °¡½Ã·Á¸é 
-			<a href="index.html" ><font color=red><¿©±â></font></a>¸¦ Å¬¸¯
-		</font>              
-		</center>
-<%       
-        }   //  µÎ¹øÂ° if-else¹®ÀÇ ³¡      
-    } else {    //  (2)  ÀÔ·ÂÇÑ ID¸¦ °¡Áö´Â ·¹ÄÚµå°¡ Å×ÀÌºí¿¡ Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì
- %>
-       <br><br><br>
-	  <center>
-	  <font color=black size=2>
-			¾ÆÀÌµð°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. ´Ù½Ã È®ÀÎÇØ ÁÖ¼¼¿ä!<p>
-			·Î±×ÀÎ ÆäÀÌÁö·Î µ¹¾Æ°¡½Ã·Á¸é 
-			<a href="login.jsp" ><font color=red><¿©±â></font></a>¸¦ Å¬¸¯, <p>
-			¸ÞÀÎ ÆäÀÌÁö·Î °¡½Ã·Á¸é 
-			<a href="index.html" ><font color=red><¿©±â></font></a>¸¦ Å¬¸¯!
-	   </font>
-	   </center>
+<script>
+    alert("ì„œë²„ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤. ìž ì‹œ í›„ ë‹¤ì‹œ ì‹œë„í•´ ì£¼ì„¸ìš”.");
+    history.back();
+</script>
 <%
-   }  // Ã¹¹øÂ° if-else¹®ÀÇ ³¡
+        return; // ì˜¤ë¥˜ ë°œìƒ ì‹œ íŽ˜ì´ì§€ ì‹¤í–‰ ì¤‘ë‹¨
+    } catch (ClassNotFoundException e) {
+        // ë“œë¼ì´ë²„ ë¡œë“œ ì˜¤ë¥˜ ì‹œ
+        System.out.println("JDBC ë“œë¼ì´ë²„ ë¡œë“œ ì˜¤ë¥˜: " + e.getMessage());
+        return;
+    } finally {
+        // 6. ë¦¬ì†ŒìŠ¤ í•´ì œ (ê°€ìž¥ ì¤‘ìš”)
+        if (rs != null) try { rs.close(); } catch (SQLException e) {}
+        if (pstmt != null) try { pstmt.close(); } catch (SQLException e) {}
+        if (conn != null) try { conn.close(); } catch (SQLException e) {}
+    }
+
+    // 7. ë¡œê·¸ì¸ ê²°ê³¼ì— ë”°ë¥¸ íŽ˜ì´ì§€ ì´ë™
+    if (loginSuccess) {
+        // ì„¸ì…˜ì— ì‚¬ìš©ìž ì •ë³´ ì €ìž¥
+        session.setAttribute("userId", memId);
+        session.setAttribute("userName", userName);
 %>
-
-</body>
-</html>
-
+<script>
+    alert("<%= userName %>ë‹˜, í™˜ì˜í•©ë‹ˆë‹¤!");
+    location.href = "index.jsp"; // ë©”ì¸ íŽ˜ì´ì§€ë¡œ ì´ë™
+</script>
+<%
+} else {
+    // ë¡œê·¸ì¸ ì‹¤íŒ¨
+%>
+<script>
+    alert("ì•„ì´ë”” ë˜ëŠ” ë¹„ë°€ë²ˆí˜¸ê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
+    history.back(); // ë¡œê·¸ì¸ íŽ˜ì´ì§€ë¡œ ëŒì•„ê°€ê¸°
+</script>
+<%
+    }
+%>

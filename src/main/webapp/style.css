@@ -52,12 +52,19 @@ body {
     border: 1px solid #ccc;
     border-radius: 20px;
 }
+.nav-right {
+    display: flex; /* ⭐️ 추가: 내부 요소들을 가로로 정렬 */
+    align-items: center;
+    gap: 20px; /* ⭐️ 추가: 모든 요소 사이에 20px 간격 설정 */
+}
 
+/* 기존 nav-right a 스타일 수정: 이제 gap을 사용하므로 margin-left를 제거하거나 0으로 설정 */
 .nav-right a {
-    margin-left: 20px;
+    /* margin-left: 20px; 👈 이 줄을 제거하거나 0으로 수정 */
     text-decoration: none;
     color: #222;
     font-weight: 500;
+    margin-left: 0; /* 기존 마진 상쇄 */
 }
 
 /* ✅ 메인 컨테이너 */
