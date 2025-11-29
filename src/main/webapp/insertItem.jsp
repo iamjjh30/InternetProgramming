@@ -2,25 +2,41 @@
 <html>
 <head><title>상품등록</title></head>
 <body>
-<center>
-<font size="6"><b>상품 등록</b></font>
+<b>상품 등록</b>
 <form method="post" action="insertItemResult.jsp" >
-<table border="2">
+<table>
 		<tr>
-			<td colspan='2'><a href="uploadForm.jsp">이미지 첨부</td>
+			<td colspan='2'>상품 카테고리:
+			<input type="text" name="ctgType"></td>
 		</tr>
 		<tr>
-			<td colspan='2'>상품번호:	  
-			<input type="text" name="cat_id"></td>
+			<td colspan='2'>상품번호:
+			<input type="text" name="prdNo"></td>
 		</tr>
 		<tr>
-			<td colspan='2'>상품명:
-			<input type="text" name="title"></td>
+			<td colspan='2'>판매자 ID:
+			<input type="text" name="sellerId"></td>
 		</tr>
-		<tr>
-			<td colspan='2'>상품가격: 
-			<input type="text" name="price"> 원</td>
-		</tr>
+    <tr>
+        <td colspan='2'>상품명:
+            <input type="text" name="prdName"></td>
+    </tr>
+    <tr>
+        <td colspan='2'>가격:
+            <input type="text" name="prdPrice">원</td>
+    </tr>
+    <tr>
+        <td colspan='2'>배송비:
+            <input type="text" name="prdDeliver">원</td>
+    </tr>
+    <tr>
+        <td colspan='2'>상품 설명:
+            <input type="text" name="prdDescription"></td>
+    </tr>
+    <tr>
+        <td colspan='2'>상품 등록일:
+            <input type="text" name="regDate"></td>
+    </tr>
 </table><p>
 <input type="submit" value="상품등록">
 <input type="reset" value="취 소">
