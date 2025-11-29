@@ -1,0 +1,203 @@
+/* 폰트 및 기본 설정 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+}
+.container {
+    width: 80%;
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+}
+
+/* ------------------- 사용자 정보 섹션 ------------------- */
+.user-profile-section {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+}
+.profile-image-box {
+    /* 이미지 박스 크기 및 원형 지정 */
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-right: 15px;
+    background-color: #ddd; /* 이미지가 없을 때 배경 */
+
+    /* 텍스트 아이콘 중앙 정렬 (이미지가 없을 때만) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+}
+.profile-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.user-info h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #333;
+}
+.user-info p {
+    margin: 5px 0 0;
+    font-size: 16px;
+    color: #777;
+}
+
+/* ------------------- 게시글 탭 섹션 ------------------- */
+.post-tabs {
+    margin-top: 30px;
+}
+.tab-menu {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+.tab-menu a {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.tab-menu a:hover,
+.tab-menu a.active {
+    color: black;
+    border-bottom: 2px solid black;
+    margin-bottom: -1px; /* border-bottom과 겹치지 않게 */
+}
+
+/* ------------------- 정렬 및 관리 섹션 ------------------- */
+.post-controls {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽 정렬 */
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+    color: #777;
+}
+.sort-options span {
+    margin-left: 10px;
+    cursor: pointer;
+}
+.sort-options .active-sort {
+    color: black;
+    font-weight: bold;
+}
+
+/* ------------------- 상품 목록 스타일 ------------------- */
+.item-list {
+    margin-top: 20px;
+}
+.item-card {
+    display: flex;
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    align-items: center;
+}
+.item-image {
+    width: 100px;
+    height: 100px; /* 모든 이미지가 100x100px 박스 안에 들어갑니다. */
+    background-color: #f5f5f5;
+    margin-right: 20px;
+    border: 1px solid #ddd;
+    overflow: hidden; /* 박스를 벗어나는 이미지 부분은 숨깁니다. */
+    position: relative;
+}
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 영역을 꽉 채우도록 크기를 조정 (잘림 발생 가능) */
+    object-position: center; /* 채우는 기준점을 중앙으로 설정 */
+}
+.item-details {
+    flex-grow: 1;
+}
+.item-details h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+.item-details p {
+    margin: 5px 0 10px;
+    font-size: 14px;
+    color: #777;
+}
+.item-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+}
+.item-status {
+    width: 120px;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+.item-status-group {
+    width: 150px; /* 적절한 너비 설정 */
+    display: flex;
+    flex-direction: column; /* 세로로 배치 */
+    align-items: flex-end; /* 오른쪽 정렬 */
+    justify-content: flex-start; /* 위에서부터 배치 */
+    gap: 8px; /* 요소들 간의 간격 */
+}
+.status-text {
+    font-size: 14px;
+    font-weight: bold;
+    color: #007bff; /* '판매중' 색상 */
+}
+.status-text.sold-out {
+    color: #cccccc; /* '판매완료' 색상 */
+}
+.status-badge {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 4px 10px; /* 좌우 패딩 늘림 */
+    color: #63b1f3; /* 이미지의 '판매중' 파란색 */
+    align-self: flex-end; /* 그룹 내에서 개별적으로 오른쪽 정렬 */
+    margin-bottom: 0; /* 불필요한 마진 제거 */
+}
+.item-status button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.status-onSale {
+    color: #38b6ff;
+}
+.status-SoldOut {
+    color: #cccccc; /* 회색 배경에 글씨는 검은색 또는 진한 회색으로 변경 */
+}
+.btn-modify, .btn-delete {
+    padding: 8px 15px; /* 패딩 조정 */
+    border: none;
+    border-radius: 5px; /* 버튼 둥글기 */
+    font-size: 14px; /* 폰트 크기 조정 */
+    cursor: pointer;
+    width: 100px; /* 버튼 너비 고정 */
+    text-align: center;
+    box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+}
+.btn-modify {
+    background-color: #00b0ff; /* 이미지의 밝은 파란색 */
+    color: white;
+}
+.btn-delete {
+    background-color: #cccccc; /* 이미지의 회색 */
+    color: #333;
+}

@@ -7,24 +7,7 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<!-- 상단 헤더 -->
-<header class="navbar">
-    <div class="navbar-inner">
-        <div class="nav-left">
-            <button class="menu-btn">☰</button>
-            <button class="category-btn">카테고리</button>
-        </div>
-        <div class="nav-center">
-            <input type="text" class="search-bar" placeholder="검색어를 입력하세요" />
-        </div>
-        <div class="nav-right">
-            <a href="#">판매하기</a>
-            <a href="#">로그인</a>
-        </div>
-    </div>
-</header>
-
-
+<div id="header-placeholder"></div>
 <!-- 메인 영역 -->
 <main class="main-container">
     <section class="hero">
@@ -64,5 +47,6 @@
         </div>
     </section>
 </main>
+<script src="include.js"></script>
 </body>
 </html>

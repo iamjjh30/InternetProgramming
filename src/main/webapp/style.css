@@ -11,11 +11,14 @@ body {
     height: 70px;
     background-color: white;
     box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    position: fixed;          /* ✅ 스크롤해도 항상 고정 */
+    top: 0;                   /* 화면 상단에 위치 */
+    left: 0;
+    z-index: 1000; /* 다른 요소보다 위에 있도록 설정 */  /* 내부 중앙 정렬 */
+
     display: flex;
-    justify-content: center;  /* 내부 중앙 정렬 */
+    justify-content: center;
+    align-items: center;
 }
 
 /* 내부 콘텐츠를 가운데 정렬 + 최대폭 제한 */
@@ -30,6 +33,7 @@ body {
 }
 
 .nav-left {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -48,12 +52,19 @@ body {
     border: 1px solid #ccc;
     border-radius: 20px;
 }
+.nav-right {
+    display: flex; /* ⭐️ 추가: 내부 요소들을 가로로 정렬 */
+    align-items: center;
+    gap: 20px; /* ⭐️ 추가: 모든 요소 사이에 20px 간격 설정 */
+}
 
+/* 기존 nav-right a 스타일 수정: 이제 gap을 사용하므로 margin-left를 제거하거나 0으로 설정 */
 .nav-right a {
-    margin-left: 20px;
+    /* margin-left: 20px; 👈 이 줄을 제거하거나 0으로 수정 */
     text-decoration: none;
     color: #222;
     font-weight: 500;
+    margin-left: 0; /* 기존 마진 상쇄 */
 }
 
 /* ✅ 메인 컨테이너 */
@@ -124,6 +135,36 @@ body {
     color: #fff;
     opacity: 0.8;
     margin-top: 6px;
+}
+/* ✅ 드롭다운 메뉴 */
+.dropdown {
+    position: absolute;
+    top: 60px;
+    left: 40px;
+    display: none;
+    background-color: white;
+    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 160px;
+}
+
+.dropdown a {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #222;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown.active {
+    display: flex;
 }
 
 /* ✅ 게시판 영역 */

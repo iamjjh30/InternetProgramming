@@ -1,0 +1,122 @@
+body {
+    margin: 0 auto;
+
+    font-family: "Noto Sans KR", sans-serif;
+    background: white;
+}
+
+/* 본문 */
+.title {
+    font-size: 28px;
+    margin-left: 300px;
+    margin-top: 80px;
+}
+
+.sell-container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 80px;
+    margin: 40px 300px 50px;
+}
+/* 이미지 박스 */
+.image-section {
+    width: 300px;
+}
+.image-box {
+    width: 300px;
+    height: 350px;
+    background: #dcdcdc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 6px;
+    position: relative;
+}
+.image-box img {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.image-box .placeholder {
+    color: #333;
+    font-size: 20px;
+}
+
+/* 입력 폼 */
+.form-section {
+    width: 500px;
+}
+.form-label {
+    display: block;
+    font-size: 16px;
+    margin: 10px 0 5px 0;
+}
+.input-field {
+    width: 97%;
+    height: 45px;
+    border: 1px solid #ccc;
+    padding-left: 14px;
+    border-radius: 6px;
+}
+.price-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.price {
+    width: 200px;
+}
+.won {
+    font-size: 17px;
+}
+.ship-label {
+    margin-left: 15px;
+}
+.ship-select {
+    height: 45px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0 10px;
+}
+.textarea {
+    width: 95%;
+    height: 130px;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: none;
+}
+
+/* 버튼 */
+.btn-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+.cancel-btn {
+    width: 200px;
+    height: 60px;
+    border: 1.5px solid #000;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 18px;
+}
+.submit-btn {
+    width: 200px;
+    height: 60px;
+    border: none;
+    background: #38b6ff;
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.submit-btn:hover {
+    background: #0099ff;
+}

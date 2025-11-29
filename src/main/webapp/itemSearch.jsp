@@ -1,106 +1,154 @@
-<%@ page contentType="text/html;charset=euc-kr" %>
-<%@ page import="java.sql.*" %>
-<%@ page import="java.text.NumberFormat" %> <%-- °¡°İ ÄŞ¸¶ Ç¥½Ã¸¦ À§ÇØ Ãß°¡ --%>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%
+    // â­ï¸ JSPì—ì„œ Context Rootë¥¼ ê°€ì ¸ì™€ JavaScript ë³€ìˆ˜ë¡œ ì €ì¥ â­ï¸
+    String contextPath = request.getContextPath();
+%>
+<!DOCTYPE html>
+<html lang="ko">
 
-<html>
 <head>
-    <title>»óÇ° °Ë»ö</title>
+    <meta charset="UTF-8">
+    <title>ê²€ìƒ‰ê²°ê³¼</title>
+    <link rel="stylesheet" href="itemSearch.css">
 </head>
+
 <body>
+<div id="header-placeholder"></div>
 
-<center>
-    <h2>»óÇ° °Ë»ö</h2>
-    
-    <%-- 1. »óÇ° °Ë»ö Æû --%>
-    <form name="search" method="post" action="itemSearch.jsp">
-        <input type="text" name="searchKeyword" size="30" 
-               value="<%-- °Ë»ö¾î À¯Áö --%><%=(request.getParameter("searchKeyword") != null ? request.getParameter("searchKeyword") : "")%>">
-        <input type="submit" value="°Ë»ö">
+<div class="container">
+
+    <h2 class="page-title">ê²€ìƒ‰ê²°ê³¼</h2>
+
+    <form name="filterForm" id="filterForm" method="GET" action="itemSearch.jsp">
+        <table class="filter-table">
+            <tr>
+                <th>ê°€ê²©</th>
+                <td>
+                    <input type="number" placeholder="ìµœì†Œê°€ê²©" class="price-input" name="minPrice">
+                    ~
+                    <input type="number" placeholder="ìµœëŒ€ê°€ê²©" class="price-input" name="maxPrice">
+                    <button type="button" class="search-btn">ê²€ìƒ‰</button>
+                </td>
+            </tr>
+
+            <tr>
+                <th>ì˜µì…˜</th>
+                <td class="option-row">
+                    <label><input type="checkbox" name="freeDelivery" value="true"> ë¬´ë£Œë°°ì†¡</label>
+                    <label><input type="checkbox" name="selling" value="onSale"> íŒë§¤ì¤‘</label>
+                    <label><input type="checkbox" name="soldout" value="SoldOut"> íŒë§¤ì™„ë£Œ</label>
+                </td>
+            </tr>
+
+            <tr>
+                <th>ì¹´í…Œê³ ë¦¬</th>
+                <td class="category-row">
+                    <select name="category" id="categorySelect" class="category-select">
+
+                        <option value="" <%= request.getParameter("category") == null || request.getParameter("category").trim().isEmpty() ? "selected" : "" %>>
+                            ì „ì²´ ë³´ê¸°
+                        </option>
+
+                        <option value="íŒ¨ì…˜ì˜ë¥˜" <%= "íŒ¨ì…˜ì˜ë¥˜".equals(request.getParameter("category")) ? "selected" : "" %>>
+                            íŒ¨ì…˜ì˜ë¥˜
+                        </option>
+                        <option value="ë·°í‹°" <%= "ë·°í‹°".equals(request.getParameter("category")) ? "selected" : "" %>>
+                            ë·°í‹°
+                        </option>
+                        <option value="ê°€ì „ì œí’ˆ" <%= "ê°€ì „ì œí’ˆ".equals(request.getParameter("category")) ? "selected" : "" %>>
+                            ê°€ì „ì œí’ˆ
+                        </option>
+                        <option value="ëª¨ë°”ì¼/íƒœë¸”ë¦¿" <%= "ëª¨ë°”ì¼/íƒœë¸”ë¦¿".equals(request.getParameter("category")) ? "selected" : "" %>>
+                            ëª¨ë°”ì¼/íƒœë¸”ë¦¿
+                        </option>
+
+                    </select>
+                </td>
+            </tr>
+        </table>
     </form>
-    <br><hr><br>
 
-    <%-- 2. »óÇ° °Ë»ö °á°ú Ã³¸® --%>
-    <%
-       
-        request.setCharacterEncoding("euc-kr");
-        String keyword = request.getParameter("searchKeyword");
+    <div class="sort-box">
+        <a href="#" class="sort-item active">ìµœì‹ ìˆœ</a>
+        <a href="#" class="sort-item">ë‚®ì€ê°€ê²©ìˆœ</a>
+        <a href="#" class="sort-item">ë†’ì€ê°€ê²©ìˆœ</a>
+    </div>
 
-        // °Ë»ö¾î°¡ ÀÖÀ» °æ¿ì¿¡¸¸ DB °Ë»ö ¼öÇà
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            
-            
-            String DB_URL = "jdbc:mysql://localhost:3306/final";
-            String DB_ID = "multi";
-            String DB_PASSWORD = "abcd";
-            
-            Connection con = null;
-            PreparedStatement pstmt = null;
-            ResultSet rs = null;
-            
-            // °¡°İ Æ÷¸Ë (1000 -> 1,000)
-            NumberFormat nf = NumberFormat.getInstance();
+    <div class="item-list" id="productListContainer">
+        <p style="text-align: center; width: 100%; color: #777;">ìƒí’ˆì„ ë¶ˆëŸ¬ì˜¤ëŠ” ì¤‘ì…ë‹ˆë‹¤...</p>
+    </div>
+</div>
 
-            try {
-                Class.forName("org.gjt.mm.mysql.Driver");
-                con = DriverManager.getConnection(DB_URL, DB_ID, DB_PASSWORD);
+<script src="include.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var contextRoot = '<%= contextPath %>';
+    $(document).ready(function() {
 
-               
-                String sql = "SELECT id, user_id, cat_id, title FROM item WHERE title  LIKE ?";
-                
-                pstmt = con.prepareStatement(sql);
-                pstmt.setString(1, "%" + keyword + "%"); // ¿¹: "ÄÄÇ»ÅÍ" -> "%ÄÄÇ»ÅÍ%"
-                
-                rs = pstmt.executeQuery();
-    %>
-                <h3>'<%= keyword %>' °Ë»ö °á°ú</h3>
-                <table border="1" width="700">
-                    <tr align="center" bgcolor="#DDDDDD">
-                        <th>»óÇ° ÀÌ¹ÌÁö</th>
-                        <th>»óÇ°¸í</th>
-                        <th>»óÇ° °¡°İ</th>
-                        <th>»ó¼¼º¸±â</th>
-                    </tr>
-    <%
-                if (!rs.isBeforeFirst()) { // rs.isBeforeFirst() : °á°ú°¡ ÀÖ´ÂÁö È®ÀÎ
-                    // °Ë»ö °á°ú°¡ ¾ø´Â °æ¿ì
-                    out.println("<tr><td colspan='4' align='center'>");
-                    out.println("'" + keyword + "'¿¡ ´ëÇÑ °Ë»ö °á°ú°¡ ¾ø½À´Ï´Ù.");
-                    out.println("</td></tr>");
-                } else {
-                    // °Ë»ö °á°ú°¡ ÀÖ´Â °æ¿ì, ¹İº¹¹®À¸·Î Ãâ·Â
-                    while (rs.next()) {
-                        int id = rs.getInt("id");
-                        int user_id = rs.getInt("user_id");
-                        int cat_id = rs.getInt("cat_id");
-                        String title = rs.getString("title");
-    %>
-                        <tr align="center">
-                            <td>
-                                <%=title%>
-                            </td>
-                            <td align="left"><%= id%></td>
-                            
-                            <td>
-                                <a href="itemDetail.jsp?prdNo=<%= cat_id %>">[»ó¼¼º¸±â]</a>
-                            </td>
-                        </tr>
-    <%
-                    } // while¹® ³¡
-                } // else¹® ³¡
-    %>
-                </table>
-    <%
-            } catch (Exception e) {
-                out.println("»óÇ° °Ë»ö Áß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù: " + e.getMessage());
-            } finally {
-                // ÀÚ¿ø ÇØÁ¦
-                if (rs != null) rs.close();
-                if (pstmt != null) pstmt.close();
-                if (con != null) con.close();
-            }
-        } // if(keyword != null) ³¡
-    %>
-</center>
+        // í˜ì´ì§€ ë¡œë“œ ì‹œ ë˜ëŠ” ì¹´í…Œê³ ë¦¬/ê²€ìƒ‰ ì´ë²¤íŠ¸ ë°œìƒ ì‹œ í˜¸ì¶œë  í•¨ìˆ˜
+        function filterProducts() {
+            // 1. í˜„ì¬ ì„ íƒëœ í•„í„° ê°’ì„ ê°€ì ¸ì˜µë‹ˆë‹¤.
+            var category = $('#categorySelect').val();
+            var minPrice = $('input[name="minPrice"]').val();
+            var maxPrice = $('input[name="maxPrice"]').val();
+            var selling = $('input[name="selling"]:checked').val(); // íŒë§¤ì¤‘ ì²´í¬ ì—¬ë¶€
+            var soldout = $('input[name="soldout"]:checked').val(); // íŒë§¤ì™„ë£Œ ì²´í¬ ì—¬ë¶€
+            var freeDelivery = $('input[name="freeDelivery"]:checked').val();
+
+            // 2. ì„œë²„ë¡œ ë³´ë‚¼ ë°ì´í„° ê°ì²´ ìƒì„±
+            var dataToSend = {
+                category: category,
+                minPrice: minPrice,
+                maxPrice: maxPrice,
+                freeDelivery: freeDelivery,
+                selling: selling,
+                soldout: soldout
+            };
+
+
+            // 3. AJAX ìš”ì²­ ì „ì†¡
+            $.ajax({
+                type: "GET",
+                url: contextRoot + "itemSearchData.jsp", // ë°ì´í„° ì¡°íšŒë¥¼ ë‹´ë‹¹í•˜ëŠ” íŒŒì¼
+                data: dataToSend,
+                beforeSend: function() {
+                    // ìš”ì²­ ì‹œì‘ ì „ ë¡œë”© ë©”ì‹œì§€ í‘œì‹œ
+                    $('#productListContainer').html('<p style="text-align: center; width: 100%; color: #333;">ìƒí’ˆì„ ê²€ìƒ‰ ì¤‘ì…ë‹ˆë‹¤...</p>');
+                },
+                success: function(response) {
+                    // 4. ì„±ê³µ ì‹œ, ì„œë²„ê°€ ë°˜í™˜í•œ HTMLë¡œ ëª©ë¡ ì˜ì—­ì„ ì—…ë°ì´íŠ¸
+                    $('#productListContainer').html(response);
+
+                    // URL ìƒíƒœ ìœ ì§€ (ì„ íƒ ì‚¬í•­)
+                    var newUrl = 'itemSearch.jsp?category=' + category;
+                    history.pushState(dataToSend, '', newUrl);
+                },
+                error: function(xhr, status, error) {
+                    // 5. ì˜¤ë¥˜ ë°œìƒ ì‹œ ë©”ì‹œì§€ í‘œì‹œ
+                    $('#productListContainer').html('<p style="text-align: center; width: 100%; color: red;">ìƒí’ˆ ê²€ìƒ‰ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. ì„œë²„ ì˜¤ë¥˜(' + xhr.status + ')ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.</p>');
+                    console.error("AJAX Error:", status, error);
+                }
+            });
+        }
+
+        // 1. ì´ˆê¸° ë¡œë“œ ì‹œ ìƒí’ˆ ëª©ë¡ì„ í•œ ë²ˆ ë¶ˆëŸ¬ì˜µë‹ˆë‹¤.
+        filterProducts();
+
+        // 2. ì¹´í…Œê³ ë¦¬ ë“œë¡­ë‹¤ìš´ ë©”ë‰´ ë³€ê²½ ì´ë²¤íŠ¸
+        $('#categorySelect').on('change', function() {
+            filterProducts();
+        });
+
+        // 3. ê°€ê²© ê²€ìƒ‰ ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸
+        $('.search-btn').on('click', function(e) {
+            filterProducts();
+        });
+
+        $('.option-row input[type="checkbox"]').on('change', function() {
+            filterProducts();
+        });
+    });
+</script>
 
 </body>
 </html>
