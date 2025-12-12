@@ -15,6 +15,8 @@
     String sellerId = "판매자 정보 없음";
     String sellerProfileImg = "default_profile.png";
 
+    String prdStatus = "onSale"; // 기본값은 판매중으로 설정
+
     // 가격 포맷 설정
     NumberFormat nf = NumberFormat.getInstance();
 
@@ -31,7 +33,7 @@
 
     // 3. 상품 상세 조회 SQL
     // prdContent, prdDeliver 등을 포함하도록 SELECT 쿼리 작성
-    String goodsSql = "SELECT prdName, prdPrice, prdDeliver, goodsImg, prdDescription, sellerId FROM goods WHERE prdNo = ?";
+    String goodsSql = "SELECT prdName, prdPrice, prdDeliver, goodsImg, prdDescription, sellerId, status FROM goods WHERE prdNo = ?";
 
     String memberSql = "SELECT profileImg FROM member WHERE memId = ?";
     // 4. 상품 조회 및 데이터 저장
@@ -52,6 +54,7 @@
                 goodsImgPath = rs.getString("goodsImg");
                 prdContent = rs.getString("prdDescription");
                 sellerId = rs.getString("sellerId");
+                prdStatus = rs.getString("status");
 
                 if (sellerId != null && !sellerId.trim().isEmpty() && !"판매자 정보 없음".equals(sellerId)) {
                     pstmtMember = conn.prepareStatement(memberSql);
@@ -76,11 +79,17 @@
             System.out.println("드라이버 로드 오류: " + e.getMessage());
         } finally {
             // 5. 리소스 해제
+            if (rsMember != null) try { rsMember.close(); } catch(SQLException e) {}
+            if (pstmtMember != null) try { pstmtMember.close(); } catch(SQLException e) {}
             if (rs != null) try { rs.close(); } catch(SQLException e) {}
             if (pstmt != null) try { pstmt.close(); } catch(SQLException e) {}
             if (conn != null) try { conn.close(); } catch(SQLException e) {}
         }
     }
+
+    boolean isSoldOut = "SoldOut".equalsIgnoreCase(prdStatus);
+    String buyButtonText = isSoldOut ? "판매 완료" : "구매하기";
+    String buyButtonDisabled = isSoldOut ? "disabled" : "";
 %>
 
 <!DOCTYPE html>
@@ -126,7 +135,11 @@
 
         <div class="button-row">
             <button class="btn-primary btn-wish" id="wishBtn">찜하기</button>
-            <button class="btn-primary btn-buy">구매하기</button>
+            <a href="purchase.jsp?prdNo=<%=request.getParameter("prdNo") %>">
+                <button class="btn-primary btn-buy"<%= buyButtonDisabled %> style="<%= isSoldOut ? "background-color: #ccc; cursor: not-allowed;" : "" %>">
+                    <%= buyButtonText %>
+                </button>
+            </a>
         </div>
 
         <input type="hidden" id="currentPrdNo" value="<%=request.getParameter("prdNo") %>">
@@ -190,7 +203,10 @@
                     alert('상품 정보가 유효하지 않습니다.');
                     return;
                 }
-
+                if (<%= isSoldOut %>) {
+                    alert('판매 완료된 상품은 찜할 수 없습니다.');
+                    return;
+                }
                 $.ajax({
                     url: contextPath + '/toggleWishAction.jsp',
                     type: 'POST',

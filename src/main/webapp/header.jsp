@@ -132,10 +132,10 @@
         <div class="nav-left">
             <button class="category-btn" id="categoryBtn">☰ 카테고리</button>
             <div class="dropdown" id="dropdownMenu">
-                <a href="#">패션의류</a>
-                <a href="#">뷰티</a>
-                <a href="#">모바일/태블릿</a>
-                <a href="#">가전제품</a>
+                <a href="itemSearch.jsp?category=패션의류">패션의류</a>
+                <a href="itemSearch.jsp?category=뷰티">뷰티</a>
+                <a href="itemSearch.jsp?category=모바일/태블릿">모바일/태블릿</a>
+                <a href="itemSearch.jsp?category=가전제품">가전제품</a>
             </div>
         </div>
         <form action="itemSearch.jsp" method="get">

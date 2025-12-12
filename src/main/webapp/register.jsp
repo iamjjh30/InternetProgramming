@@ -54,6 +54,11 @@
         </select>
     </div>
 
+    <div class="form-row address-row">
+        <label>주소</label>
+        <input type="text" name="address" id="memAddress" required/>
+    </div>
+
     <div class="form-row phone-row" >
         <label>휴대폰번호</label>
         <select name="phone1">

@@ -1,7 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%
-    // ⭐️ JSP에서 Context Root를 가져와 JavaScript 변수로 저장 ⭐️
+    // JSP에서 Context Root를 가져와 JavaScript 변수로 저장
     String contextPath = request.getContextPath();
+    String initialKeyword = request.getParameter("keyword");
+    if (initialKeyword == null) initialKeyword = "";
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -20,6 +22,7 @@
     <h2 class="page-title">검색결과</h2>
 
     <form name="filterForm" id="filterForm" method="GET" action="itemSearch.jsp">
+        <input type="hidden" name="keyword" id="keywordInput" value="<%= initialKeyword %>">
         <table class="filter-table">
             <tr>
                 <th>가격</th>
@@ -69,9 +72,9 @@
     </form>
 
     <div class="sort-box">
-        <a href="#" class="sort-item active">최신순</a>
-        <a href="#" class="sort-item">낮은가격순</a>
-        <a href="#" class="sort-item">높은가격순</a>
+        <a href="javascript:void(0);" class="sort-item active" data-sort-field="prdNo" data-sort-order="DESC">최신순</a>
+        <a href="javascript:void(0);" class="sort-item" data-sort-field="prdPrice" data-sort-order="ASC">낮은가격순</a>
+        <a href="javascript:void(0);" class="sort-item" data-sort-field="prdPrice" data-sort-order="DESC">높은가격순</a>
     </div>
 
     <div class="item-list" id="productListContainer">
@@ -83,11 +86,13 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     var contextRoot = '<%= contextPath %>';
+    var initialKeyword = '<%= initialKeyword %>';
     $(document).ready(function() {
 
         // 페이지 로드 시 또는 카테고리/검색 이벤트 발생 시 호출될 함수
         function filterProducts(sortField, sortOrder) {
             // 1. 현재 선택된 필터 값을 가져옵니다.
+            var keyword = $('#keywordInput').val();
             var category = $('#categorySelect').val();
             var minPrice = $('input[name="minPrice"]').val();
             var maxPrice = $('input[name="maxPrice"]').val();
@@ -99,6 +104,7 @@
 
             // 2. 서버로 보낼 데이터 객체 생성
             var dataToSend = {
+                keyword: keyword,
                 category: category,
                 minPrice: minPrice,
                 maxPrice: maxPrice,
@@ -123,7 +129,7 @@
                     // 4. 성공 시, 서버가 반환한 HTML로 목록 영역을 업데이트
                     $('#productListContainer').html(response);
 
-                    // URL 상태 유지 (선택 사항)
+                    // URL 상태 유지
                     var newUrl = 'itemSearch.jsp?category=' + category;
                     history.pushState(dataToSend, '', newUrl);
                 },
@@ -151,6 +157,25 @@
 
         $('.option-row input[type="checkbox"]').on('change', function() {
             filterProducts();
+        });
+
+        $('.sort-item').on('click', function(e) {
+            e.preventDefault(); // 기본 링크 동작 방지
+
+            // 클릭된 링크에서 정렬 기준과 순서를 가져옵니다.
+            var newSortField = $(this).data('sort-field');
+            var newSortOrder = $(this).data('sort-order');
+
+            // CSS 클래스 업데이트 (활성화 표시)
+            $('.sort-item').removeClass('active');
+            $(this).addClass('active');
+
+            // 현재 정렬 상태 업데이트
+            currentSortField = newSortField;
+            currentSortOrder = newSortOrder;
+
+            // 새로운 정렬 기준으로 상품 목록 필터링
+            filterProducts(newSortField, newSortOrder);
         });
     });
 </script>

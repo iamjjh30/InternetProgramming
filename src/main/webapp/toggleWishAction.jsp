@@ -9,7 +9,6 @@
     response.setCharacterEncoding("UTF-8");
 
     // 1. 세션에서 사용자 ID (memId) 및 상품 번호 가져오기
-    // 세션 키는 "userId"이지만, DB 컬럼은 "memId"에 맞춰 사용합니다.
     String memId = (String) session.getAttribute("userId");
     String prdNo = request.getParameter("prdNo");
 
@@ -83,8 +82,6 @@
             actionType = "delete";
         } else {
             // 찜 기록이 없으면 추가 (찜하기)
-            // wishNo는 char(40)이므로 UUID 등을 사용하거나, DB에서 자동 생성되는 값이 아니라면 적절한 값으로 대체해야 합니다.
-            // **편의상 현재는 prdNo와 memId를 조합하여 임시로 생성합니다. 실제 환경에서는 UUID.randomUUID().toString() 사용 권장.**
             String wishNo = java.util.UUID.randomUUID().toString();
             String insertSql = "INSERT INTO wishlist (wishNo, memId, prdNo) VALUES (?, ?, ?)";
             pstmt = conn.prepareStatement(insertSql);
