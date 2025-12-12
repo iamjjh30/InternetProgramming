@@ -21,6 +21,7 @@
     String currentStatus = request.getParameter("status");
     String statusFilter = "";
     String statusValue = "";
+    boolean isWishTab = "wish".equals(currentStatus);
 
     // '판매중' 탭 클릭 시 (status=selling)
     if ("selling".equals(currentStatus)) {
@@ -31,6 +32,17 @@
     else if ("soldout".equals(currentStatus)) {
         statusFilter = " AND status = ?";
         statusValue = "SoldOut"; // DB의 '판매완료' 값 (DB에 저장된 실제 '판매완료' 값으로 사용)
+    }
+
+    if (!isWishTab) {
+        if ("selling".equals(currentStatus)) {
+            statusFilter = " AND status = ?";
+            statusValue = "onSale";
+        }
+        else if ("soldout".equals(currentStatus)) {
+            statusFilter = " AND status = ?";
+            statusValue = "SoldOut";
+        }
     }
 
     String memName = ""; // 사용자 이름 변수 초기화
@@ -47,7 +59,7 @@
     // 3. 상품 정보 저장을 위한 리스트
     // [0:prdNo, 1:prdName, 2:prdPrice, 3:ctgType, 4:prdDescription, 5:goodsImg, 6:status]
     List<Object[]> productList = new ArrayList<>();
-
+    int paramIndex = 1;
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
         conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
@@ -73,16 +85,26 @@
         // 5. 사용자가 등록한 상품 전체 조회
         // ----------------------------------------------------
         // SQL 쿼리: goodsImg와 status 컬럼을 포함하여 조회
-        String goodsSql = "SELECT prdNo, prdName, prdPrice, ctgType, prdDescription, goodsImg, status FROM goods WHERE sellerId = ?" + statusFilter + " ORDER BY prdNo DESC";
+        String goodsSql = "";
+        if (isWishTab) {
+            // ⭐️ 찜 목록 조회 SQL: wishlist 테이블과 goods 테이블을 memId로 조인 ⭐️
+            goodsSql = "SELECT g.prdNo, g.prdName, g.prdPrice, g.ctgType, g.prdDescription, g.goodsImg, g.status " +
+                    "FROM goods g JOIN wishlist w ON g.prdNo = w.prdNo " +
+                    "WHERE w.memId = ? ORDER BY w.wishNo DESC";
+            pstmt = conn.prepareStatement(goodsSql);
 
-        pstmt = conn.prepareStatement(goodsSql);
+            // PreparedStatement에 값 설정
+            pstmt.setString(paramIndex, memId); // 1. sellerId 바인딩
+        } else {
+            goodsSql = "SELECT prdNo, prdName, prdPrice, ctgType, prdDescription, goodsImg, status " +
+                    "FROM goods WHERE sellerId = ?" + statusFilter + " ORDER BY prdNo DESC";
 
-        // PreparedStatement에 값 설정
-        pstmt.setString(1, memId); // 1. sellerId 바인딩
+            pstmt = conn.prepareStatement(goodsSql);
+            pstmt.setString(paramIndex++, memId); // 1. sellerId 바인딩
 
-        int paramIndex = 2;
-        if (!statusFilter.isEmpty()) {
-            pstmt.setString(paramIndex, statusValue); // 2. status 값 바인딩 (필터링 조건)
+            if (!statusFilter.isEmpty()) {
+                pstmt.setString(paramIndex, statusValue);
+            }
         }
 
         rs = pstmt.executeQuery();
@@ -116,7 +138,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>마이페이지 - 내 게시글</title>
+    <title>마이페이지</title>
     <link rel="stylesheet" href="myPage.css">
 </head>
 <body>
@@ -155,7 +177,7 @@
             <%
                 boolean isSelling = "selling".equals(currentStatus);
                 boolean isSoldout = "soldout".equals(currentStatus);
-                boolean isAll = !isSelling && !isSoldout;
+                boolean isAll = !isSelling && !isSoldout && isWishTab;
             %>
             <a href="myPage.jsp" class="<%= isAll ? "active" : "" %>">전체</a>
 
@@ -163,7 +185,7 @@
 
             <a href="myPage.jsp?status=soldout" class="<%= isSoldout ? "active" : "" %>">판매완료</a>
 
-            <a href="#">찜</a>
+            <a href="myPage.jsp?status=wish" class="<%= isWishTab ? "active" : "" %>">찜</a>
         </div>
     </div>
 
@@ -172,6 +194,18 @@
             if (productList.isEmpty()) {
         %>
         <p style="text-align: center; color: #777;">등록된 상품이 없습니다.</p>
+        <%
+             if (isWishTab) {
+        %>
+                찜한 상품이 없습니다.
+        <%
+             } else {
+        %>
+                등록된 상품이 없습니다.
+        <%
+             }
+        %>
+        </p>
         <%
         } else {
             for (Object[] product : productList) {
@@ -189,7 +223,7 @@
                 if ("onSale".equals(prdStatus)) {
                     statusDisplay = "판매중";
                     statusClass = "status-onSale";
-                } else if ("soldOut".equals(prdStatus)) {
+                } else if ("SoldOut".equals(prdStatus)) {
                     statusDisplay = "판매 완료";
                     statusClass = "status-SoldOut";
                 } else {
@@ -215,8 +249,10 @@
             </div>
             <div class="item-status-group">
                 <span class="status-badge <%= statusClass %>"><%= statusDisplay %></span>
-                <button class="btn-modify" onclick="location.href='modifyItem.jsp?prdNo=<%= prdNo %>'">수정</button>
+                <% if (!isWishTab) { %>
+                <button class="btn-modify" onclick="location.href='updateItem.jsp?prdNo=<%= prdNo %>'">수정</button>
                 <button class="btn-delete" onclick="location.href='deleteItem.jsp?prdNo=<%= prdNo %>'">삭제</button>
+                <% } %>
             </div>
         </div>
         <%

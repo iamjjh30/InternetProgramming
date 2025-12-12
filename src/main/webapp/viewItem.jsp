@@ -86,7 +86,7 @@
     $(document).ready(function() {
 
         // 페이지 로드 시 또는 카테고리/검색 이벤트 발생 시 호출될 함수
-        function filterProducts(sortField, sortOrder) {
+        function filterProducts() {
             // 1. 현재 선택된 필터 값을 가져옵니다.
             var category = $('#categorySelect').val();
             var minPrice = $('input[name="minPrice"]').val();
@@ -94,8 +94,6 @@
             var selling = $('input[name="selling"]:checked').val(); // 판매중 체크 여부
             var soldout = $('input[name="soldout"]:checked').val(); // 판매완료 체크 여부
             var freeDelivery = $('input[name="freeDelivery"]:checked').val();
-            var sortField = sortField || 'prdNo';
-            var sortOrder = sortOrder || 'DESC';
 
             // 2. 서버로 보낼 데이터 객체 생성
             var dataToSend = {
@@ -104,9 +102,7 @@
                 maxPrice: maxPrice,
                 freeDelivery: freeDelivery,
                 selling: selling,
-                soldout: soldout,
-                sortField: sortField,
-                sortOrder: sortOrder
+                soldout: soldout
             };
 
 
@@ -134,7 +130,6 @@
                 }
             });
         }
-
 
         // 1. 초기 로드 시 상품 목록을 한 번 불러옵니다.
         filterProducts();

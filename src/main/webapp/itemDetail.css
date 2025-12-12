@@ -59,16 +59,15 @@ body {
     cursor: pointer;
 }
 
-.chat-btn {
+.btn-wish {
     padding: 12px 28px;
-
     border: 1px solid #ccc;
     background: white;
     cursor: pointer;
     border-radius: 5px;
 }
 
-.buy-btn {
+.btn-buy {
     padding: 12px 32px;
     background: #1e90ff;
     border: none;

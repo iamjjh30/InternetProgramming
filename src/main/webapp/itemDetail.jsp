@@ -125,9 +125,11 @@
         </div>
 
         <div class="button-row">
-            <button class="chat-btn">찜하기</button>
-            <button class="buy-btn">구매하기</button>
+            <button class="btn-primary btn-wish" id="wishBtn">찜하기</button>
+            <button class="btn-primary btn-buy">구매하기</button>
         </div>
+
+        <input type="hidden" id="currentPrdNo" value="<%=request.getParameter("prdNo") %>">
     </div>
 </div>
 
@@ -160,6 +162,68 @@
 
 
 <script src="include.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const $wishBtn = $('#wishBtn');
+        const currentPrdNo = $('#currentPrdNo').val(); // HTML에서 상품 번호를 가져옴
 
+        const contextPath = "<%= request.getContextPath() %>";
+        // 찜 상태를 확인하는 함수
+        function checkWishStatus() {
+            if (!currentPrdNo) return;
+
+            // DB에서 현재 상품이 찜 되어 있는지 확인하는 AJAX 호출 (별도 checkWishStatusAction.jsp 필요)
+            // 편의상, 여기서는 바로 토글 기능을 구현합니다.
+            // 실제 구현에서는 이 부분이 페이지 로드 시에 동작해야 합니다.
+
+            // --- 간소화된 초기 상태 설정 (필요시 상세 구현) ---
+            // $wishBtn.text('찜하기').removeClass('wished');
+            // if (초기_찜_상태) { $wishBtn.text('찜 취소').addClass('wished'); }
+            // ----------------------------------------------------
+        }
+
+        $(document).ready(function() {
+            // checkWishStatus(); // 페이지 로드 시 찜 상태 확인 (선택 사항)
+
+            $wishBtn.on('click', function() {
+                if (!currentPrdNo) {
+                    alert('상품 정보가 유효하지 않습니다.');
+                    return;
+                }
+
+                $.ajax({
+                    url: contextPath + '/toggleWishAction.jsp',
+                    type: 'POST',
+                    data: { prdNo: currentPrdNo },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            if (response.action === 'insert') {
+                                $wishBtn.text('찜 취소').addClass('wished');
+                                alert('상품을 찜 목록에 추가했습니다.');
+                            } else {
+                                $wishBtn.text('찜하기').removeClass('wished');
+                                alert('찜 목록에서 상품을 제거했습니다.');
+                            }
+                        } else {
+                            if (response.message === 'self_wish_not_allowed') {
+                                alert('자신이 등록한 상품은 찜할 수 없습니다.'); // ⭐️ 사용자에게 메시지 표시 ⭐️
+                            } else if (response.message === 'login_required') {
+                                alert('로그인이 필요합니다.');
+                                location.href = contextPath + '/login.jsp';
+                            } else {
+                                alert('찜 처리 중 오류가 발생했습니다: ' + response.message);
+                                console.error(response);
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('서버 통신 오류가 발생했습니다.');
+                        console.error(xhr, status, error);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
