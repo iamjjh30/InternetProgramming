@@ -91,17 +91,16 @@
         whereClause = " WHERE " + String.join(" AND ", conditions);
     }
 
-    // ⭐️ D. 정렬 기준 구성 ⭐️
-    String orderByClause = " ORDER BY prdNo DESC"; // 기본값: 최신순 (prdNo를 보통 사용)
+    //  정렬 기준 구성
+    String orderByClause = " ORDER BY regDate DESC"; // 기본값: 최신순
 
     if (sortField != null && !sortField.isEmpty()) {
         String order = (sortOrder != null && sortOrder.toUpperCase().equals("ASC")) ? "ASC" : "DESC";
 
-        // SQL Injection 방지를 위해 허용된 필드만 사용
         if (sortField.equals("prdPrice")) {
-            orderByClause = " ORDER BY prdPrice " + order + ", prdNo DESC"; // 가격 같으면 최신순
+            orderByClause = " ORDER BY prdPrice " + order + ", regDate DESC"; // 가격 같으면 최신순
         } else if (sortField.equals("prdNo")) {
-            orderByClause = " ORDER BY prdNo " + order;
+            orderByClause = " ORDER BY regDate " + order;
         }
     }
 
@@ -114,8 +113,7 @@
         conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
 
         // 4. 상품 조회 SQL (동적으로 WHERE 절 및 ORDER BY 절 추가)
-        String goodsSql = "SELECT prdNo, prdName, prdPrice, ctgType, goodsImg, status FROM goods" + whereClause + orderByClause;
-
+        String goodsSql = "SELECT prdNo, prdName, prdPrice, ctgType, goodsImg, status FROM goods" + whereClause + " " + orderByClause;
         pstmt = conn.prepareStatement(goodsSql);
 
         // PreparedStatement 값 바인딩 (동적)

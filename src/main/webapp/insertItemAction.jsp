@@ -24,7 +24,7 @@
     int maxSize = 10 * 1024 * 1024; // 최대 파일 크기 10MB
     String encoding = "UTF-8";
 
-    // 파일 업로드 객체 생성 (cos.jar 필요)
+    // 파일 업로드 객체 생성
     MultipartRequest multi = null;
     try {
         multi = new MultipartRequest(request, savePath, maxSize, encoding, new DefaultFileRenamePolicy());

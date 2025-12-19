@@ -119,7 +119,7 @@
         conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
 
         // 2. 최근 등록된 상품 8개 조회 SQL
-        String goodsSql = "SELECT prdNo, prdName, prdPrice, goodsImg, status FROM goods ORDER BY prdNo DESC LIMIT 8";
+        String goodsSql = "SELECT prdNo, prdName, prdPrice, goodsImg, status FROM goods where status = 'onSale' ORDER BY regDate DESC LIMIT 8";
 
         pstmt = conn.prepareStatement(goodsSql);
         rs = pstmt.executeQuery();

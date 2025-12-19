@@ -87,22 +87,25 @@
 <script>
     var contextRoot = '<%= contextPath %>';
     var initialKeyword = '<%= initialKeyword %>';
-    $(document).ready(function() {
 
-        // 페이지 로드 시 또는 카테고리/검색 이벤트 발생 시 호출될 함수
+    $(document).ready(function() {
+        // ⭐️ 중요: 현재 정렬 상태를 저장할 변수를 먼저 선언합니다.
+        var currentSortField = 'prdNo';
+        var currentSortOrder = 'DESC';
+
         function filterProducts(sortField, sortOrder) {
-            // 1. 현재 선택된 필터 값을 가져옵니다.
             var keyword = $('#keywordInput').val();
             var category = $('#categorySelect').val();
             var minPrice = $('input[name="minPrice"]').val();
             var maxPrice = $('input[name="maxPrice"]').val();
-            var selling = $('input[name="selling"]:checked').val(); // 판매중 체크 여부
-            var soldout = $('input[name="soldout"]:checked').val(); // 판매완료 체크 여부
+            var selling = $('input[name="selling"]:checked').val();
+            var soldout = $('input[name="soldout"]:checked').val();
             var freeDelivery = $('input[name="freeDelivery"]:checked').val();
-            var sortField = sortField || 'prdNo';
-            var sortOrder = sortOrder || 'DESC';
 
-            // 2. 서버로 보낼 데이터 객체 생성
+            // 파라미터로 넘어온 값이 없으면 현재 저장된 상태를 사용
+            var fSortField = sortField || currentSortField;
+            var fSortOrder = sortOrder || currentSortOrder;
+
             var dataToSend = {
                 keyword: keyword,
                 category: category,
@@ -111,70 +114,56 @@
                 freeDelivery: freeDelivery,
                 selling: selling,
                 soldout: soldout,
-                sortField: sortField,
-                sortOrder: sortOrder
+                sortField: fSortField,
+                sortOrder: fSortOrder
             };
 
-
-            // 3. AJAX 요청 전송
             $.ajax({
                 type: "GET",
-                url: contextRoot + "itemSearchData.jsp", // 데이터 조회를 담당하는 파일
+                url: contextRoot + "/itemSearchData.jsp",
                 data: dataToSend,
                 beforeSend: function() {
-                    // 요청 시작 전 로딩 메시지 표시
                     $('#productListContainer').html('<p style="text-align: center; width: 100%; color: #333;">상품을 검색 중입니다...</p>');
                 },
                 success: function(response) {
-                    // 4. 성공 시, 서버가 반환한 HTML로 목록 영역을 업데이트
                     $('#productListContainer').html(response);
 
-                    // URL 상태 유지
-                    var newUrl = 'itemSearch.jsp?category=' + category;
+                    // URL 상태 업데이트
+                    var newUrl = 'itemSearch.jsp?category=' + category + '&sortField=' + fSortField;
                     history.pushState(dataToSend, '', newUrl);
                 },
                 error: function(xhr, status, error) {
-                    // 5. 오류 발생 시 메시지 표시
-                    $('#productListContainer').html('<p style="text-align: center; width: 100%; color: red;">상품 검색에 실패했습니다. 서버 오류(' + xhr.status + ')가 발생했습니다.</p>');
-                    console.error("AJAX Error:", status, error);
+                    $('#productListContainer').html('<p style="text-align: center; width: 100%; color: red;">오류가 발생했습니다.</p>');
                 }
             });
         }
 
-
-        // 1. 초기 로드 시 상품 목록을 한 번 불러옵니다.
+        // 1. 초기 로드
         filterProducts();
 
-        // 2. 카테고리 드롭다운 메뉴 변경 이벤트
-        $('#categorySelect').on('change', function() {
+        // 2. 각종 필터 변경 이벤트
+        $('#categorySelect, .option-row input[type="checkbox"]').on('change', function() {
             filterProducts();
         });
 
-        // 3. 가격 검색 버튼 클릭 이벤트
-        $('.search-btn').on('click', function(e) {
+        $('.search-btn').on('click', function() {
             filterProducts();
         });
 
-        $('.option-row input[type="checkbox"]').on('change', function() {
-            filterProducts();
-        });
-
+        // 3. 정렬 클릭 이벤트
         $('.sort-item').on('click', function(e) {
-            e.preventDefault(); // 기본 링크 동작 방지
+            e.preventDefault();
 
-            // 클릭된 링크에서 정렬 기준과 순서를 가져옵니다.
             var newSortField = $(this).data('sort-field');
             var newSortOrder = $(this).data('sort-order');
 
-            // CSS 클래스 업데이트 (활성화 표시)
             $('.sort-item').removeClass('active');
             $(this).addClass('active');
 
-            // 현재 정렬 상태 업데이트
+            // ⭐️ 변수에 현재 정렬 상태 저장
             currentSortField = newSortField;
             currentSortOrder = newSortOrder;
 
-            // 새로운 정렬 기준으로 상품 목록 필터링
             filterProducts(newSortField, newSortOrder);
         });
     });

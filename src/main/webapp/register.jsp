@@ -16,7 +16,7 @@
         <label>프로필</label>
         <div class="profile-section">
             <label for="profileImageInput">
-                <img id="profilePreview" src="https://via.placeholder.com/80" alt="프로필 사진" class="profile-image" />
+                <img id="profilePreview" alt="프로필 사진" class="profile-image" />
             </label>
             <input type="file" name="profileImg" id="profileImageInput" accept="image/*" style="display:none;" />
         </div>
